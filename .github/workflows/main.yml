@@ -6,27 +6,26 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # ✅ Fixes all Node 20 warnings globally
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.2.2          # ✅ Node 24 compatible
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4.4.0        # ✅ Node 24 compatible
+        uses: actions/setup-node@v4
         with:
           node-version: '24'
 
       - name: Install Backend Dependencies
-        run: |
-          cd server
-          npm install
+        run: cd server && npm install
 
       - name: Install Frontend Dependencies
-        run: |
-          cd public
-          npm install
+        run: cd public && npm install
 
   build-and-push-docker:
     needs: build-and-test
@@ -34,26 +33,26 @@ jobs:
     if: github.event_name == 'push'
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4.2.2          # ✅ Node 24 compatible
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.10.0  # ✅ Node 24 compatible
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3.4.0       # ✅ Node 24 compatible
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and Push Backend
-        uses: docker/build-push-action@v6.15.0  # ✅ v6 = Node 24 compatible
+        uses: docker/build-push-action@v6
         with:
           context: ./server
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/nexchat-backend:latest
 
       - name: Build and Push Frontend
-        uses: docker/build-push-action@v6.15.0  # ✅ v6 = Node 24 compatible
+        uses: docker/build-push-action@v6
         with:
           context: ./public
           push: true
