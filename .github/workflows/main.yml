@@ -16,8 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: '24' # Node 24 use kar rahe hain for future-proofing
 
       - name: Install Backend Dependencies
         run: |
@@ -51,11 +50,11 @@ jobs:
         with:
           context: ./server
           push: true
-          tags: jnv007/nexchat-backend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nexchat-backend:latest
 
       - name: Build and Push Frontend
         uses: docker/build-push-action@v5
         with:
           context: ./public
           push: true
-          tags: jnv007/nexchat-frontend:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nexchat-frontend:latest
